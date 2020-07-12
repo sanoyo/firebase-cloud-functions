@@ -27,7 +27,7 @@
 
 // firestoreへの保存
 // const admin = require('firebase-admin');
-// const functions = require('firebase-functions');
+const functions = require('firebase-functions');
 
 // admin.initializeApp(functions.config().firebase);
 // let db = admin.firestore();
@@ -41,3 +41,12 @@
 //       country: 'USA'
 //     })
 // })
+
+// firebase authentication
+
+exports.authenticate = functions
+  .region('asia-northeast1')
+  .auth.user().onCreate((user) => {
+    console.log(user.email)
+    console.log('ok')
+});
