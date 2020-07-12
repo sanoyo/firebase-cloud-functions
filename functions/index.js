@@ -26,11 +26,11 @@
 
 
 // firestoreへの保存
-// const admin = require('firebase-admin');
+const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 
-// admin.initializeApp(functions.config().firebase);
-// let db = admin.firestore();
+admin.initializeApp(functions.config().firebase);
+let db = admin.firestore();
 
 // exports.save = functions
 //   .region('asia-northeast1')
@@ -47,6 +47,9 @@ const functions = require('firebase-functions');
 exports.authenticate = functions
   .region('asia-northeast1')
   .auth.user().onCreate((user) => {
-    console.log(user.email)
-    console.log('ok')
+    let usersRef = db.collection('users');
+      usersRef.doc('SF').set({
+      uid: user.uid,
+      email: user.email
+    }) 
 });
