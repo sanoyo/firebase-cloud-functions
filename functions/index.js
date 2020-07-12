@@ -32,18 +32,6 @@ const functions = require('firebase-functions');
 admin.initializeApp(functions.config().firebase);
 let db = admin.firestore();
 
-// exports.save = functions
-//   .region('asia-northeast1')
-//   .https.onRequest((req, res) => {
-//     let usersRef = db.collection('users');
-//       usersRef.doc('SF').set({
-//       name: 'San Francisco',
-//       country: 'USA'
-//     })
-// })
-
-// firebase authentication
-
 exports.authenticate = functions
   .region('asia-northeast1')
   .auth.user().onCreate((user) => {
