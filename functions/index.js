@@ -35,9 +35,8 @@ let db = admin.firestore();
 exports.authenticate = functions
   .region('asia-northeast1')
   .auth.user().onCreate((user) => {
-    let usersRef = db.collection('users');
-      usersRef.doc('SF').set({
-      uid: user.uid,
-      email: user.email
+    let usersRef = db.collection('admin_users');
+      usersRef.doc(user.uid).set({
+        email: user.email
     }) 
 });
