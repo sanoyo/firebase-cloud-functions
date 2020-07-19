@@ -1,4 +1,3 @@
-// import { Follow } from './usecase/follow.js'
 let usecase = require('./usecase/follow.js');
 
 const functions = require('firebase-functions');
