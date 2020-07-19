@@ -16,7 +16,7 @@ exports.callback = functions
     const usersRef = db.collection('user_posts');
 
     // FireStoreに保存
-    if (messageType == 'follow') {
+    if (messageType === 'follow') {
       // ここをclass化する
       usersRef.doc().set({
         line_id: uId,
@@ -24,13 +24,13 @@ exports.callback = functions
         reply_token: replyToken,
         sender_type: senderType
       })
-    } else if (messageType == 'unfollow') {
+    } else if (messageType === 'unfollow') {
         usersRef.doc().set({
           line_id: uId,
           message_type: messageType,
           sender_type: senderType
         })
-    } else if (messageType == 'message') {
+    } else if (messageType === 'message') {
       messageType = req.body.events[0]['message']['type']
       const messgae = req.body.events[0]['message']['text']
 
@@ -41,14 +41,26 @@ exports.callback = functions
         reply_token: replyToken,
         sender_type: senderType
       })
-    } else if (messageType == 'post_back') {
-      console.log('post_backだよ')
+    } else if (messageType === 'postback') {
+      const data = req.body.events[0]['postback']['data']
+
+      usersRef.doc().set({
+        line_id: uId,
+        message: { 
+          data: data,
+          params: {
+            datetime: '11111'
+          }
+        },
+        message_type: messageType,
+        reply_token: replyToken,
+        sender_type: senderType
+      })
     }
 
     // Railsにpost投げる
     const options = {
-      url: 'https://6509e3d00b5d.ngrok.io/callback',
-      port: '3000',
+      url: 'http://localhost:3000/callback',
       method: 'POST',
       headers: {
         "content-type": "application/json"
@@ -66,5 +78,5 @@ exports.authenticate = functions
     let usersRef = db.collection('admin_users');
       usersRef.doc(user.uid).set({
         email: user.email
-    }) 
+    })
 });
