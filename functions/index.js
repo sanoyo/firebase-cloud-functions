@@ -9,6 +9,7 @@ const db = admin.firestore();
 exports.callback = functions
   .region('asia-northeast1')
   .https.onRequest((req) => {
+
     let messageType = req.body.events[0]['type']
     const uId = req.body.events[0]['source']['userId']
     const replyToken = req.body.events[0]['replyToken']
@@ -60,7 +61,7 @@ exports.callback = functions
 
     // Railsにpost投げる
     const options = {
-      url: 'http://localhost:3000/callback',
+      url: 'https://afbf5e3c83e6.ngrok.io/callback',
       method: 'POST',
       headers: {
         "content-type": "application/json"
