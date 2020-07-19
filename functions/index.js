@@ -7,25 +7,49 @@ admin.initializeApp(functions.config().firebase);
 exports.callback = functions
   .region('asia-northeast1')
   .https.onRequest((req) => {
+    let messageType = req.body.events[0]['type']
     const uId = req.body.events[0]['source']['userId']
     const replyToken = req.body.events[0]['replyToken']
-    const messageType = req.body.events[0]['type']
     const senderType = req.body.events[0]['source']['type']
-    console.log(senderType)
+
+    // 初期化
+    let db = admin.firestore();
 
     // FireStoreに保存
-    // follow
-    let db = admin.firestore();
-    let usersRef = db.collection('user_posts');
-      usersRef.doc(uId).set({
-        line_id: uId,
-        message_type: messageType,
-        reply_token: replyToken,
-        sender_type: senderType
-    })
-    
+    if (messageType == 'follow') {
+      usersRef = db.collection('user_posts');
+        // ここをclass化する
+        usersRef.doc().set({
+          line_id: uId,
+          message_type: messageType,
+          reply_token: replyToken,
+          sender_type: senderType
+        })
+    } else if (messageType == 'unfollow') {
+      usersRef = db.collection('user_posts');
+        usersRef.doc().set({
+          line_id: uId,
+          message_type: messageType,
+          sender_type: senderType
+        })
+    } else if (messageType == 'message') {
+      messageType = req.body.events[0]['message']['type']
+      const messgae = req.body.events[0]['message']['text']
+
+      usersRef = db.collection('user_posts');
+        usersRef.doc().set({
+          line_id: uId,
+          message: { text: messgae },
+          message_type: messageType,
+          reply_token: replyToken,
+          sender_type: senderType
+        })
+    } else if (messageType == 'post_back') {
+      console.log('post_backだよ')
+    }
+
     // Railsにpost投げる
-    // const options = {c
+    // const options = {
     //   url: 'https://6509e3d00b5d.ngrok.io/callback',
     //   port: '3000',
     //   method: 'POST',
