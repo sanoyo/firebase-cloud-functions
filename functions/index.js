@@ -61,7 +61,7 @@ exports.callback = functions
 
     // Railsにpost投げる
     const options = {
-      url: 'https://afbf5e3c83e6.ngrok.io/callback',
+      url: 'http://localhost:3000/callback',
       method: 'POST',
       headers: {
         "content-type": "application/json"
