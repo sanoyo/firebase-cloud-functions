@@ -10,6 +10,7 @@ const db = admin.firestore();
 exports.callback = functions
   .region('asia-northeast1')
   .https.onRequest((req) => {
+    console.log(req.body)
     let messageType = req.body.events[0]['type']
     const uId = req.body.events[0]['source']['userId']
     const replyToken = req.body.events[0]['replyToken']
@@ -17,7 +18,7 @@ exports.callback = functions
     const usersRef = db.collection('deploy_test');
 
     // FireStoreに保存
-    const saveFirestore = new Promise((resolve, reject) => {
+    const saveFirestore = new Promise((resolve) => {
       if (messageType === 'follow') {
         usersRef.doc().set({
           line_id: uId,
@@ -34,7 +35,7 @@ exports.callback = functions
       } else if (messageType === 'message') {
         messageType = req.body.events[0]['message']['type']
         const messgae = req.body.events[0]['message']['text']
-  
+
         usersRef.doc().set({
           line_id: uId,
           message: { text: messgae },
@@ -44,7 +45,7 @@ exports.callback = functions
         })
       } else if (messageType === 'postback') {
         const data = req.body.events[0]['postback']['data']
-  
+
         usersRef.doc().set({
           line_id: uId,
           message: { 
@@ -57,13 +58,13 @@ exports.callback = functions
           reply_token: replyToken,
           sender_type: senderType
         })
-      }
-      resolve('Success!');
+    }
+      resolve('Success!')
     })
     
-    saveFirestore.then(() => {
+    return saveFirestore.then(() => {
       const options = {
-        url: 'http://localhost:3000/callback',
+        url: 'https://7b6e66701e06.ngrok.io/callback',
         method: 'POST',
         headers: {
           "content-type": "application/json"
@@ -71,8 +72,8 @@ exports.callback = functions
         body: req.body,
         json: true,
       };
-      request(options)
+      return request(options)
     }).catch((error) => { 
-      console.log(error);
-    });;
+      return console.log(error)
+    });
 })
